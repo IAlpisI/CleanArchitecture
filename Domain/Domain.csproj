@@ -41,12 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constant\TournamentSettings.cs" />
     <Compile Include="Entities\Common\BaseEntity.cs" />
     <Compile Include="Entities\Common\ModificationEntity.cs" />
+    <Compile Include="Entities\JWTAuthOptions.cs" />
     <Compile Include="Entities\Tournament\Match.cs" />
     <Compile Include="Entities\Particapant\Role.cs" />
     <Compile Include="Entities\Particapant\User.cs" />
     <Compile Include="Entities\Tournament\Tournament.cs" />
+    <Compile Include="Enums\TournamentState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

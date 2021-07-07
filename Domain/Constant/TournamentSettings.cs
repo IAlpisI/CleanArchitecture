@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Common.Interface
+namespace Domain.Constant
 {
-    public interface IRoleService
+    public static class TournamentSettings
     {
+        public static int MaxPlayer = 512;
     }
 }

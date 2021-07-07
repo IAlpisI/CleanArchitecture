@@ -1,19 +1,22 @@
 ﻿using Application.Common.Interface;
 using Application.Extensions;
-using Domain.Entities.Player;
+using Domain.Entities.Particapant;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infastructure.Services
+namespace Application.Services
 {
     public class UserService : IUserService
     {
+        private readonly IUserRepository _userRepository;
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
         public async Task<User> AddUserAsync(string userName, string password, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(userName))
@@ -27,6 +30,7 @@ namespace Infastructure.Services
             byte[] passwordHash = await ComputePassword(password, cancellationToken).ConfigureAwait(false);
             var newUser = new User(userName, passwordHash);
 
+            await _userRepository.AddAsync(newUser, cancellationToken);
 
             return newUser;
         }
@@ -38,6 +42,19 @@ namespace Infastructure.Services
             byte[] passwordHash = await sha256.ComputeHashAsync(
                 passwordStream, cancellationToken).ConfigureAwait(false);
             return passwordHash;
+        }
+
+        public async Task<User> GetValidUserAsync(string userName, string clearTextPassword, CancellationToken cancellationToken)
+        {
+            var user = await _userRepository.GetUserByName(userName);
+            byte[] passwordHash = await ComputePassword(clearTextPassword, cancellationToken).ConfigureAwait(false);
+            if(passwordHash.SequenceEqual(user.PasswordHash))
+            {
+                return user;
+            }
+            return null;
+
+
         }
     }
 }

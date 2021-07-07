@@ -1,28 +1,33 @@
 ﻿using Application.Common.Interface;
-using Domain.Entities.Player;
+using Domain.Entities.Particapant;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Dtos;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles ="Admin")]
     [ApiController]
-    [Route("[cotroller]")]
-    public class UserController : Controller
+    [Route("[controller]")]
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<UserController> _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, IUserService userService, ILogger<UserController> logger)
         {
+            _userRepository = userRepository;
             _userService = userService;
             _logger = logger;
         }
 
         [HttpPost]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> CreateUser(UserRegisterDTO register)
         {
             try
@@ -42,9 +47,19 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-
-        }
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(id, user => user.Include(u => u.Roles)).ConfigureAwait(false);
+                return Ok(user);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Failed fetch the user.");
+                return StatusCode(500, "internal server error");
+            }
+}
     }
 }
