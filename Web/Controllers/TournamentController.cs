@@ -1,5 +1,6 @@
 ﻿using Application.Features.Tournaments.Commands.CreateTournament;
 using Application.Features.Tournaments.Commands.JoinTournament;
+using Application.Features.Tournaments.Queries.GetTournaments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -16,10 +17,10 @@ namespace Web.Controllers
         {
             _mediator = mediator;
         }
-        [HttpGet]
-        public async Task<ActionResult> Get()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TournamentDTO>> Get(int id)
         {
-            return null;
+            return await _mediator.Send(new GetTournamentQuery { TournamentId = id });
         }
 
         [HttpPost]

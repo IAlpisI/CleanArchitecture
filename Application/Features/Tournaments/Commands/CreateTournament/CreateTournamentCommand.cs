@@ -3,7 +3,6 @@ using Domain.Entities.Tournament;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interface;
-using System;
 
 namespace Application.Features.Tournaments.Commands.CreateTournament
 {
@@ -25,22 +24,9 @@ namespace Application.Features.Tournaments.Commands.CreateTournament
 
         public async Task<int> Handle(CreateTournamentCommand request, CancellationToken cancellationToken)
         {
-            var totalRounds = (int)Math.Ceiling(Math.Log2(request.PlayerCount));
-
             var entity = new Tournament(request.Name,
                                         request.GameName,
-                                        request.PlayerCount,
-                                        totalRounds);
-
-            entity.AddMatch(1, 1);
-
-            for (var x=1; x <= totalRounds; x++)
-            {
-                for(var y = 1; y <= (int)(Math.Pow(x, 2) / 2); y++)
-                {
-                    entity.AddMatch(x, y);
-                }
-            }
+                                        request.PlayerCount);
 
             await _tournamentRepository.AddAsync(entity, cancellationToken);
 

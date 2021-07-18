@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Application.Common.Behaviour;
 using Application.Common.Interface;
 using Application.Services;
+using AutoMapper;
 
 namespace Application
 {
@@ -11,6 +12,7 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddMediatR(Assembly.GetExecutingAssembly());

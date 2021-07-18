@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Enums;
 
 namespace Application.Features.Tournaments.Commands.JoinTournament
 {
     public class JoinTournamentCommand : IRequest
     {
-        public int TournamenId { get; set; }
+        public int TournamentId { get; set; }
         public int UserId { get; set; }
     }
 
@@ -29,10 +30,16 @@ namespace Application.Features.Tournaments.Commands.JoinTournament
 
         public async Task<Unit> Handle(JoinTournamentCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken: cancellationToken);
-            var tournament = await _tournamentRepository.GetByIdAsync(request.TournamenId, cancellationToken: cancellationToken);
 
-            tournament.AddPlayer(user);
+            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken: cancellationToken);
+            var tournament = await _tournamentRepository.GetByIdAsync(request.TournamentId, cancellationToken: cancellationToken);
+
+            if(tournament.State == TournamentState.Opened)
+            {
+                tournament.AddPlayer(user);
+            }
+
+            await _tournamentRepository.UpdateAsync(tournament, cancellationToken);
 
             return Unit.Value;
         }

@@ -9,7 +9,6 @@
 
     public enum MatchState
     {
-        CheckIn,
         Waitting,
         Started,
         Finished

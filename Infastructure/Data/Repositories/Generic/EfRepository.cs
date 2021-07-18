@@ -34,14 +34,10 @@ namespace Infastructure.Data.Repositories.Generic
 
         public async Task<T> GetByIdAsync(int id, Func<IQueryable<T>, IQueryable<T>> userInlude, CancellationToken cancellationToken)
         {
-            //var keyValues = new object[] { id };
-
             userInlude ??= users => users;
             IQueryable<T> users =  _dbContext.Set<T>().AsQueryable();
             users = userInlude(users);
             return await users.SingleAsync(u => u.Id == id, cancellationToken);
-
-            //return await _dbContext.Set<T>().FindAsync(keyValues, cancellationToken);
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken)
