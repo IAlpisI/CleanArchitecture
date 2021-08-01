@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Domain.Entities.Tournament;
+using Domain.Entities.TournamentAggregate;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interface;

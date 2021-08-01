@@ -1,8 +1,8 @@
 ﻿using Application.Common.Interface;
+using Application.Specification;
 using Domain.Entities.Particapant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ using Web.Dtos;
 
 namespace Web.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -52,14 +52,14 @@ namespace Web.Controllers
         {
             try
             {
-                var user = await _userRepository.GetByIdAsync(id, user => user.Include(u => u.Roles)).ConfigureAwait(false);
+                var user = await _userRepository.FirstAsync(new UserByIdWithRoles(id)).ConfigureAwait(false);
                 return Ok(user);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed fetch the user.");
                 return StatusCode(500, "internal server error");
             }
-}
+        }
     }
 }

@@ -5,7 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using Application.Extensions;
-using Domain.Entities.Tournament;
+using Domain.Entities.TournamentAggregate;
+using System.Linq;
+using System.Collections.Generic;
+using Application.Specification;
 
 namespace Application.Features.Tournaments.Commands.StartTournament
 {
@@ -25,13 +28,13 @@ namespace Application.Features.Tournaments.Commands.StartTournament
 
         public async Task<Unit> Handle(StartTournamentCommand request, CancellationToken cancellationToken)
         {
-            int index = 0;
-            var tournament = await _tournamentRepository.GetByIdAsync(request.TournamentId, cancellationToken: cancellationToken);
-            var totalRounds = (int)Math.Ceiling(Math.Log2(tournament.Players.Count));
-            var firstRoundMatches = (int)Math.Pow(2, (totalRounds - 1));
-            var players = tournament.Players;
+            var tournament = await _tournamentRepository.FirstOrDefaultAsync(new TournamentsByIdWithParameters(request.TournamentId), cancellationToken: cancellationToken);
+            var players = tournament.Users.ToList();
+            var matches = new List<Match>();
             var totalPlayer = players.Count;
-            var matches = tournament.Matches;
+
+            var totalRounds = (int)Math.Ceiling(Math.Log2(totalPlayer));
+            var firstRoundMatches = (int)Math.Pow(2, (totalRounds - 1));
 
             players.Shuffle();
             tournament.AddMatch(1, 1);
@@ -46,12 +49,13 @@ namespace Application.Features.Tournaments.Commands.StartTournament
 
             for(int x = 1; x <= firstRoundMatches; x++)
             {
-                var match = new Match(firstRoundMatches, index);
-                match.AddPalyer(players[x].Id, 0);
+                var playerIndex = firstRoundMatches + x;
+                var match = new Match(firstRoundMatches, x);
+                match.AddPalyer(players[x - 1].Id, 0);
 
-                if(firstRoundMatches + x <= totalPlayer)
+                if(playerIndex <= totalPlayer)
                 {
-                    match.AddPalyer(players[firstRoundMatches+x].Id, 1);
+                    match.AddPalyer(players[playerIndex - 1].Id, 1);
                 }
 
                 matches.Add(match);
@@ -65,10 +69,14 @@ namespace Application.Features.Tournaments.Commands.StartTournament
                 }
             }
 
-            tournament.SetMatches(matches);
+            foreach(var match in matches)
+            {
+                tournament.AddMatch(match);
+            }
+
             tournament.SetTournamentState(TournamentState.Started);
 
-            //await _tournamentRepository.UpdateAsync(tournament, cancellationToken);
+            await _tournamentRepository.UpdateAsync(tournament, cancellationToken);
 
             return Unit.Value;
         }

@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interface;
-using Domain.Entities.Tournament;
+using Domain.Entities.TournamentAggregate;
 using Infastructure.Data.Repositories.Generic;
 
 namespace Infastructure.Data.Repositories.MatchRepository

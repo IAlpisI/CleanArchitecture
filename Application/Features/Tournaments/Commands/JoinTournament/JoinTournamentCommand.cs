@@ -1,12 +1,9 @@
 ﻿using Application.Common.Interface;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Enums;
+using Application.Specification;
 
 namespace Application.Features.Tournaments.Commands.JoinTournament
 {
@@ -32,7 +29,7 @@ namespace Application.Features.Tournaments.Commands.JoinTournament
         {
 
             var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken: cancellationToken);
-            var tournament = await _tournamentRepository.GetByIdAsync(request.TournamentId, cancellationToken: cancellationToken);
+            var tournament = await _tournamentRepository.FirstOrDefaultAsync(new TournamentsByIdWithParameters(request.TournamentId), cancellationToken: cancellationToken);
 
             if(tournament.State == TournamentState.Opened)
             {

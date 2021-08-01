@@ -3,6 +3,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Enums;
+using Application.Specification;
 
 namespace Application.Features.Matches.Commands
 {
@@ -27,8 +28,10 @@ namespace Application.Features.Matches.Commands
         }
         public async Task<Unit> Handle(UpdateScoreCommand request, CancellationToken cancellationToken)
         {
-            var match = await _matchRepository.GetByIdAsync(request.MatchId, cancellationToken: cancellationToken);
-            var tournament = await _tournamentRepository.GetByIdAsync(request.TournamentId, cancellationToken: cancellationToken);
+            var matchSpec = new MatchesById(request.MatchId);
+            var tournamentSpec = new TournamentsByIdWithParameters(request.TournamentId);
+            var match = await _matchRepository.FirstOrDefaultAsync(matchSpec , cancellationToken: cancellationToken);
+            var tournament = await _tournamentRepository.FirstOrDefaultAsync(tournamentSpec, cancellationToken: cancellationToken);
 
             match.UpdateScore(request.PlayerId,
                               request.PlayerOneScore,

@@ -15,6 +15,7 @@ namespace Domain.Entities.Particapant
             PasswordHash = passwordHash;
         }
 
-        public User() { }
+        public User() {  }
+        public User(int id) => (Id) = (id);
     }
 }

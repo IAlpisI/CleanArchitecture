@@ -1,4 +1,6 @@
-﻿using Domain.Constant;
+﻿
+using Ardalis.GuardClauses;
+using Domain.Constant;
 using Domain.Entities.Common;
 using Domain.Entities.Particapant;
 using Domain.Enums;
@@ -6,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain.Entities.Tournament
+namespace Domain.Entities.TournamentAggregate
 {
     public class Tournament: ModificationEntity
     {
@@ -14,11 +16,18 @@ namespace Domain.Entities.Tournament
         public string GameName { get; private set; }
         public int PlayerCount { get; private set; }
         public TournamentState State { get; private set; } = TournamentState.Opened;
-        public List<User> Players { get; private set; } = new List<User>();
-        public List<Match> Matches { get; private set; } = new List<Match>();
+
+        public IEnumerable<User> Users => _users.AsEnumerable();
+        private readonly List<User> _users = new List<User>();
+        public IEnumerable<Match> Matches => _matches.AsEnumerable();
+        private readonly List<Match> _matches = new List<Match>();
 
         public Tournament(string name, string gameName, int playerCount)
         {
+            Guard.Against.NullOrEmpty(name, nameof(name));
+            Guard.Against.NullOrEmpty(gameName, nameof(gameName));
+            Guard.Against.OutOfRange(playerCount, nameof(playerCount), 2, TournamentSettings.MaxPlayers);
+
             Name = name;
             GameName = gameName;
             PlayerCount = playerCount;
@@ -29,12 +38,12 @@ namespace Domain.Entities.Tournament
         public void AddPlayer(User player)
         {
             if(State != TournamentState.Opened ||
-                Players.Any(p => p.Id == player.Id &&
-                PlayerCount+1 <= TournamentSettings.MaxPlayer))
+                Users.Any(p => p.Id == player.Id) ||
+                _users.Count+1 > PlayerCount)
             {
                 return;
             }
-            Players.Add(player);
+            _users.Add(player);
         }
 
         public void ProccedMatch(int matchId)
@@ -72,17 +81,19 @@ namespace Domain.Entities.Tournament
 
         public void RemovePlayer(User player)
         {
-            Players.Remove(player);
+            _users.Remove(player);
         }
 
         public void AddMatch(int round, int matchIndex)
         {
-            Matches.Add(new Match(round, matchIndex));
+            _matches.Add(new Match(round, matchIndex));
         }
 
-        public void SetMatches(List<Match> matches)
+        public void AddMatch(Match match)
         {
-            Matches = matches;
+            _matches.Add(match);
         }
+
+        public Tournament(int id) => (Id) = (id);
     }
 }

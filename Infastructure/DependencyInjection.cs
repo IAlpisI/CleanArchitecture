@@ -2,6 +2,7 @@
 using Application.Services;
 using Infastructure.Data;
 using Infastructure.Data.Repositories.Generic;
+using Infastructure.Data.Repositories.MatchRepository;
 using Infastructure.Data.Repositories.TournamentRepository;
 using Infastructure.Data.Repositories.UserRepository;
 using Infastructure.Services;
@@ -19,6 +20,7 @@ namespace Infastructure
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>

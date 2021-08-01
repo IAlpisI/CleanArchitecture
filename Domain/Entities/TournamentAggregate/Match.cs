@@ -1,7 +1,9 @@
-﻿using Domain.Entities.Common;
+﻿using Ardalis.GuardClauses;
+using Domain.Constant;
+using Domain.Entities.Common;
 using Domain.Enums;
 
-namespace Domain.Entities.Tournament
+namespace Domain.Entities.TournamentAggregate
 {
     public class Match : ModificationEntity
     {
@@ -14,20 +16,26 @@ namespace Domain.Entities.Tournament
         public int PlayerOneId { get; private set; }
         public int PlayerTwoId { get; private set; }
         public int MaxScore { get; private set; }
-        public Tournament Tournament { get; private set; }
-        public int? TournamentId { get; private set; }
 
         public Match() { }
 
         public Match(int round, int matchIndex)
         {
+            Guard.Against.OutOfRange(round, nameof(round), 1, TournamentSettings.MaxRounds);
+            Guard.Against.OutOfRange(matchIndex, nameof(matchIndex), 1, TournamentSettings.MaxMatches);
+
             Round = round;
             MatchIndex = matchIndex;
         }
-        public void UpdateScore(int scoreOne, int scoreTwo, MatchState state)
+        public void UpdateScore(int scoreOne, int maxScore, int scoreTwo, MatchState state)
         {
+            Guard.Against.OutOfRange(maxScore, nameof(maxScore), 0, TournamentSettings.MaxScore);
+            Guard.Against.OutOfRange(scoreOne, nameof(scoreOne), 0, maxScore);  
+            Guard.Against.OutOfRange(scoreTwo, nameof(scoreTwo), 0, maxScore);
+
             PlayerOneScore = scoreOne;
             PlayerTwoScore = scoreTwo;
+            MaxScore = maxScore;
 
             UpdateState(state);
         }
@@ -81,5 +89,7 @@ namespace Domain.Entities.Tournament
             PlayerOneScore = scoreOne;
             PlayerTwoScore = scoreTwo;
         }
+
+        public Match(int id, int round, int matchIndex) => (Id, Round, MatchIndex) = (id, round, matchIndex);
     }
 }

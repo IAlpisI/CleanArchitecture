@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Tournament;
+﻿using Domain.Entities.TournamentAggregate;
 
 namespace Application.Common.Interface
 {

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Tournament;
+﻿using Domain.Entities.TournamentAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

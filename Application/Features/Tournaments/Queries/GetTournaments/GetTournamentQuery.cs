@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interface;
+using Application.Specification;
 using AutoMapper;
+using Domain.Entities.TournamentAggregate;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,11 @@ namespace Application.Features.Tournaments.Queries.GetTournaments
 
         public async Task<TournamentDTO> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            var tournament = await _tournamenRepository.GetByIdAsync(request.TournamentId, cancellationToken: cancellationToken);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Tournament, TournamentDTO>());
+            var mapper = new Mapper(config);
+
+            var tournament = await _tournamenRepository.FirstOrDefaultAsync(new TournamentsByIdWithParameters(request.TournamentId), cancellationToken: cancellationToken);
+
             return _mapper.Map<TournamentDTO>(tournament);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Application.Common.Interface;
 using Domain.Entities.Common;
 using Domain.Entities.Particapant;
-using Domain.Entities.Tournament;
+using Domain.Entities.TournamentAggregate;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Threading;

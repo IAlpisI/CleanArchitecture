@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interface;
+using Application.Specification;
 using AutoMapper;
 using MediatR;
 using System.Threading;
@@ -24,7 +25,8 @@ namespace Application.Features.Matches.Queries.GetMatch
 
         public async Task<MatchDTO> Handle(GetMatchQuery request, CancellationToken cancellationToken)
         {
-            var match = await _matchRepository.GetByIdAsync(request.MatchId);
+            var matchSpec = new MatchesById(request.MatchId);
+            var match = await _matchRepository.FirstOrDefaultAsync(matchSpec, cancellationToken);
             return _mapper.Map<MatchDTO>(match);
         }
     }

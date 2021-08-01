@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ardalis.GuardClauses, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ardalis.GuardClauses.3.2.0\lib\net40\Ardalis.GuardClauses.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2021.2.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2021.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,13 +51,16 @@
     <Compile Include="Entities\Common\BaseEntity.cs" />
     <Compile Include="Entities\Common\ModificationEntity.cs" />
     <Compile Include="Entities\JWTAuthOptions.cs" />
-    <Compile Include="Entities\Tournament\Match.cs" />
+    <Compile Include="Entities\TournamentAggregate\Match.cs" />
     <Compile Include="Entities\Particapant\Role.cs" />
     <Compile Include="Entities\Particapant\User.cs" />
-    <Compile Include="Entities\Tournament\Tournament.cs" />
+    <Compile Include="Entities\TournamentAggregate\Tournament.cs" />
     <Compile Include="Enums\TournamentState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

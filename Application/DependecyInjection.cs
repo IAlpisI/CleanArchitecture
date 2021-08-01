@@ -5,6 +5,7 @@ using Application.Common.Behaviour;
 using Application.Common.Interface;
 using Application.Services;
 using AutoMapper;
+using Application.Common.Mappings;
 
 namespace Application
 {

@@ -1,5 +1,6 @@
 ﻿using Application.Features.Tournaments.Commands.CreateTournament;
 using Application.Features.Tournaments.Commands.JoinTournament;
+using Application.Features.Tournaments.Commands.StartTournament;
 using Application.Features.Tournaments.Queries.GetTournaments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,12 @@ namespace Web.Controllers
         [Route("join")]
         [HttpPost]
         public async Task<ActionResult> Join(JoinTournamentCommand command)
+        {
+            return Ok(await _mediator.Send(command));
+        }
+        [Route("start")]
+        [HttpPost]
+        public async Task<ActionResult> Start(StartTournamentCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
